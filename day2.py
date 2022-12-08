@@ -1,9 +1,14 @@
+from dataclasses import dataclass
+
 from day2data import guide
 
 def read_data(data):
     lines = data.split("\n")
     return [line.split(" ") for line in lines]
 
+@dataclass
+class ThrowData:
+    pass
 
 scores = {
     'X' : 1,
