@@ -8,8 +8,15 @@ def read_data(data):
 
 @dataclass
 class ThrowData:
-    pass
+    score: int
+    beats: str
+    matches: str
 
+lookup = {
+    'X': ThrowData(1, 'C', 'A'),
+    'Y': ThrowData(2, 'A', 'B'),
+    'Z': ThrowData(3, 'B', 'C')
+}
 scores = {
     'X' : 1,
     'Y': 2,
@@ -37,11 +44,22 @@ def score_throw(their_throw, my_throw):
     
     return scores[my_throw]
 
+def score_throw2(their_throw, my_throw):
+    play_data = lookup[my_throw]
+
+    if play_data.beats == their_throw:
+        return play_data.score + 6
+    
+    if play_data.matches == their_throw:
+        return play_data.score + 3
+
+    return play_data.score
+
 def calculate_score(data):
     total_score = 0
 
     for throws in read_data(data):
-        total_score += score_throw(throws[0], throws[1])
+        total_score += score_throw2(throws[0], throws[1])
 
     return total_score
 
