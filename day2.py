@@ -15,7 +15,10 @@ class ThrowData:
 lookup = {
     'X': ThrowData(1, 'C', 'A'),
     'Y': ThrowData(2, 'A', 'B'),
-    'Z': ThrowData(3, 'B', 'C')
+    'Z': ThrowData(3, 'B', 'C'),
+    'A': ThrowData(1, 'C', 'A'),
+    'B': ThrowData(2, 'A', 'B'),
+    'C': ThrowData(3, 'B', 'C'),
 }
 scores = {
     'X' : 1,
@@ -36,15 +39,6 @@ matches = {
 }
 
 def score_throw(their_throw, my_throw):
-    if their_throw == matches[my_throw]:
-        return scores[my_throw] + 3
-    
-    if wins[my_throw] == their_throw:
-        return scores[my_throw] + 6
-    
-    return scores[my_throw]
-
-def score_throw2(their_throw, my_throw):
     play_data = lookup[my_throw]
 
     if play_data.beats == their_throw:
@@ -59,15 +53,43 @@ def calculate_score(data):
     total_score = 0
 
     for throws in read_data(data):
-        total_score += score_throw2(throws[0], throws[1])
+        total_score += score_throw(throws[0], throws[1])
 
     return total_score
 
-print(calculate_score(guide))
+
+# A Rock, B Paper, C Scissors
+appropriate_response = {
+    'XA': 'C',
+    'ZA': 'B',
+    'XB': 'A',
+    'ZB': 'C',
+    'XC': 'B',
+    'ZC': 'A',
+}
+
+def calculate_score2(data):
+    def determine_throw(their_throw, outcome):
+
+        if outcome == 'Y':
+            return their_throw
+
+        return appropriate_response[outcome + their_throw]
+    total_score = 0
+
+    for throws in read_data(data):
+        total_score += score_throw(throws[0], determine_throw(throws[0], throws[1]))
+
+    return total_score
 
 test_data = """A Y
 B X
 C Z"""
 
 test_score = calculate_score(test_data)
-assert test_score == 15, f"Calculated score was {test_score}"
+test_score_2 = calculate_score2(test_data)
+
+for score, expected_score in ((test_score, 15), (test_score_2, 12)):
+    assert score == expected_score, f"Calculated score was {score}"
+ 
+print(calculate_score(guide), calculate_score2(guide))
